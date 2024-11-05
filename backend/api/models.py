@@ -104,7 +104,7 @@ class Payment(models.Model):
     amount = models.DecimalField(max_digits=10, decimal_places=2)
     payment_date = models.DateTimeField(default=timezone.now)
     receipt_number = models.CharField(max_length=100, unique=True)
-    payment_method = models.CharField(max_length=10, choices=PAY_METHODS, default='MoMo')
+    payment_method = models.CharField(max_length=15, choices=PAY_METHODS, default='MoMo')
 
 # Notification For System Users Model
 # ------------------------------------------------------------
