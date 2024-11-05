@@ -26,7 +26,6 @@ class CustomUser(AbstractUser):
         super().save(*args, **kwargs)
 
 
-
 # Employer Profile Model
 # ------------------------------------------------------------
 class EmployerProfile(models.Model):
@@ -45,7 +44,6 @@ class EmployeeProfile(models.Model):
 
     def __str__(self) -> str:
         return f"Employee Profile for {self.user.username}"
-
 
 # Client Model
 # ------------------------------------------------------------
