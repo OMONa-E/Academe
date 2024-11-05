@@ -11,7 +11,7 @@ class CustomUser(AbstractUser):
         ('CEO', 'CEO'),
         ('Employer', 'Employer'),
         ('Employee', 'Employee'),
-        ('Client', 'Client'),
+        # ('Client', 'Client'),
     ]
     role = models.CharField(max_length=10, choices=ROLE_CHOICES)
     date_of_birth = models.DateField(null=True, blank=True)
@@ -123,3 +123,34 @@ class AuditLog(models.Model):
     target_model = models.CharField(max_length=100)
     target_object_id = models.PositiveIntegerField()
     changes = models.JSONField()
+
+
+
+# Signals To Auto-Generate User Profile and Audit Logs
+# ------------------------------------------------------------
+from django.db.models.signals import post_save
+from django.dispatch import receiver
+
+# Signal to automatically create Employer or Employee profiles upon user save
+@receiver(post_save, sender=CustomUser)
+def create_role_based_profile(sender, instance, created, **kwargs):
+    if created:
+        if instance.role == 'Employer':
+            EmployerProfile.objects.get_or_create(user=instance)
+        elif instance.role == 'Employee':
+            EmployeeProfile.objects.get_or_create(user=instance)
+
+# Signal to log Chnages for audit logs
+@receiver(post_save, sender=Client)
+@receiver(post_save, sender=TrainingSession)
+@receiver(post_save, sender=Payment)
+def create_audit_log(sender, instance, created, **kwargs):
+    action = 'create' if created else 'update'
+    changes = {field.name: getattr(instance, field.name) for field in instance._meta.fields}
+    AuditLog.objects.create(
+        action_type=action,
+        actor=instance.assigned_employee.user if hasattr(instance, 'assigned_employee') else None,  
+        target_model=sender.__name__,
+        target_object_id=instance.id,
+        changes=changes,
+    )
