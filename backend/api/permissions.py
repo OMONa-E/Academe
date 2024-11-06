@@ -8,7 +8,19 @@ class IsCEO(permissions.BasePermission):
     '''
     def has_permission(self, request, view):
         return bool(request.user.is_authenticated and request.user.role == 'CEO')
-    
+
+# Employer Auth
+# -------------------------------------
+class IsEmployer(permissions.BasePermission):
+    def has_permission(self, request, view):
+        return bool(request.user.is_authenticated and request.user.role == 'Employer')
+
+# Employee Auth
+# -------------------------------------
+class IsEmployee(permissions.BasePermission):
+    def has_permission(self, request, view):
+        return bool(request.user.is_authenticated and request.user.role == 'Employee')
+
 # CEO Or Employer Auth
 # -------------------------------------
 class IsEmployerOrCEO(permissions.BasePermission):
