@@ -1,6 +1,7 @@
-from rest_framework import viewsets, generics, permissions
+from rest_framework import viewsets, generics, permissions, filters
 from rest_framework.decorators import action
 from rest_framework.response import Response
+from django_filters.rest_framework import DjangoFilterBackend
 from .models import *
 from .serializers import *
 from .permissions import *
@@ -81,6 +82,9 @@ class ClientViewSet(viewsets.ModelViewSet):
     queryset = Client.objects.all()
     serializer_class = ClientSerializer
     permission_classes = [ IsEmployerOrEmployeeOrCEO ]
+    filter_backends = [ DjangoFilterBackend, filters.SearchFilter ]
+    filterset_fields = [ 'status', 'assigned_employee', 'payment_status' ]
+    search_fields = [ 'first_name', 'last_name', 'email', 'nin' ]
 
 # Training Module API View
 # ------------------------------------------------------------

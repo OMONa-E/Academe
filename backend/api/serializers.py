@@ -24,7 +24,7 @@ class ClientSerializer(serializers.ModelSerializer):
     assigned_employee = EmployeeProfileSerializer()
     class Meta:
         model = models.Client
-        fields = [ 'id', 'first_name', 'last_name', 'email', 'phone_number', 'status', 'assigned_employee', 'payment_status' ]
+        fields = [ 'id', 'first_name', 'last_name', 'email', 'nin', 'phone_number', 'status', 'assigned_employee', 'payment_status' ]
 
 class TrainingModuleSerializer(serializers.ModelSerializer):
     class Meta:

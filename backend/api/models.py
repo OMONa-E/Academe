@@ -55,6 +55,7 @@ class Client(models.Model):
     first_name = models.CharField(max_length=100)
     last_name = models.CharField(max_length=100)
     email = models.EmailField(unique=True)
+    nin = models.CharField(max_length=100, unique=True)
     phone_number = models.CharField(max_length=15)
     status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='partial')
     assigned_employee = models.ForeignKey(EmployeeProfile, on_delete=models.SET_NULL, null=True)
