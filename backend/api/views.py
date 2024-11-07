@@ -154,3 +154,4 @@ class AuditLogViewSet(viewsets.ReadOnlyModelViewSet):
     filter_backends = [ DjangoFilterBackend, filters.SearchFilter ]
     filterset_fields = [ 'actor', 'action_type' ]
     search_fields = [ 'changes', 'timestamp' ]
+    
