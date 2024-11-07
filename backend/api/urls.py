@@ -20,6 +20,8 @@ urlpatterns = [
     # Token URLs for Login 
     path('token/', TokenObtainPairView.as_view(), name='token-obtain-pair'), # Login
     path('token/refresh/', TokenRefreshView.as_view(), name='token-refresh'), # Token Refresh
+    # URL for Logout endpoint
+    path('logout/', views.LogoutView.as_view(), name='logout'),
 ]
 
 urlpatterns += [
