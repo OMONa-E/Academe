@@ -144,3 +144,13 @@ class ClientProgressViewSet(viewsets.ModelViewSet):
     queryset = ClientProgress.objects.all()
     serializer_class = ClientProgressSerializer
     permission_classes = [ IsEmployerOrEmployeeOrCEO ]
+
+# Audit Log API View
+# ------------------------------------------------------------
+class AuditLogViewSet(viewsets.ReadOnlyModelViewSet):
+    queryset = AuditLog.objects.all()
+    serializer_class = AuditLogSerilizer
+    permission_classes = [ IsCEO ]
+    filter_backends = [ DjangoFilterBackend, filters.SearchFilter ]
+    filterset_fields = [ 'actor', 'action_type' ]
+    search_fields = [ 'changes', 'timestamp' ]
