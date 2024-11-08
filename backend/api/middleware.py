@@ -26,16 +26,18 @@ class SessionTrackingMiddleware:
 
             log_entry, created = AuditLog.objects.get_or_create( # Update or create the AuditLog entry for session tracking
                 actor=request.user,
-                action_type='login' if created else 'session_update',
                 target_model='CustomUser',
                 target_object_id=request.user.id,
                 defaults={
+                    'action_type': 'login',
                     'login_timestamp': timezone.now(),
                     'ip_address': ip_address,
                     'device_info': device_info
                 }
             )
-            log_entry.last_active = timezone.now() # Update the last active timestamp on every request
-            log_entry.save()
+            if not created:
+                log_entry.action_type = 'session_update'
+                log_entry.last_active = timezone.now() # Update the last active timestamp on every request
+                log_entry.save()
         return response
         
