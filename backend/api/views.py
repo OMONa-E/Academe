@@ -153,4 +153,10 @@ class AuditLogViewSet(viewsets.ReadOnlyModelViewSet):
     filter_backends = [ DjangoFilterBackend, filters.SearchFilter ]
     filterset_fields = [ 'actor', 'action_type' ]
     search_fields = [ 'changes', 'timestamp' ]
-    
+
+# Active Session API View
+# ------------------------------------------------------------    
+class ActiveSessionViewSet(viewsets.ReadOnlyModelViewSet):
+    queryset = AuditLog.objects.filter(action_type__in=['login', 'session_update'])
+    serializer_class = AuditLogSerilizer
+    permission_classes = [ IsCEO ]
