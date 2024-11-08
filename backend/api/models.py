@@ -119,9 +119,9 @@ class AuditLog(models.Model):
     action_type = models.CharField(max_length=100)
     timestamp = models.DateTimeField(auto_now_add=True)
     actor = models.ForeignKey(CustomUser, on_delete=models.SET_NULL, null=True)
-    target_model = models.CharField(max_length=100)
-    target_object_id = models.PositiveIntegerField()
-    changes = models.JSONField()
+    target_model = models.CharField(max_length=100, blank=True, null=True)
+    target_object_id = models.PositiveIntegerField(blank=True, null=True)
+    changes = models.JSONField(default=dict)
     # Session-specific fields
     device_info = models.CharField(max_length=200, blank=True, null=True)
     ip_address = models.GenericIPAddressField(blank=True, null=True)

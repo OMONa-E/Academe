@@ -30,6 +30,7 @@ class SessionTrackingMiddleware:
                 target_object_id=request.user.id,
                 defaults={
                     'action_type': 'login',
+                    'changes': {},
                     'login_timestamp': timezone.now(),
                     'ip_address': ip_address,
                     'device_info': device_info
