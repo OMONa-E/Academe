@@ -11,6 +11,7 @@ router.register(r'training-module', views.TrainingModuleViewSet)
 router.register(r'client-progress', views.ClientProgressViewSet)
 router.register(r'training-sessions', views.TrainingSessionViewSet)
 router.register(r'audit-logs', views.AuditLogViewSet)
+router.register(r'active-sessions', views.ActiveSessionViewSet, basename='active-sessions')
 
 urlpatterns = [
     # Viewset URL
