@@ -122,9 +122,16 @@ class AuditLog(models.Model):
     target_model = models.CharField(max_length=100)
     target_object_id = models.PositiveIntegerField()
     changes = models.JSONField()
+    # Session-specific fields
+    device_info = models.CharField(max_length=200, blank=True, null=True)
+    ip_address = models.GenericIPAddressField(blank=True, null=True)
+    login_timestamp = models.DateTimeField(null=True, blank=True)
+    last_active = models.DateTimeField(null=True, blank=True)
 
+    def __str__(self) -> str:
+        return f'{self.action_type} by {self.actor} on  {self.timestamp}'
 
-
+# ------------------------------------------------------------
 # Signals To Auto-Generate User Profile and Audit Logs
 # ------------------------------------------------------------
 from django.db.models.signals import post_save
