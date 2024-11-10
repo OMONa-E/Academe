@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     # our app
     'api',
     # Third party app
+    'corsheaders',
     'rest_framework',
     'rest_framework_simplejwt',
     'rest_framework_simplejwt.token_blacklist',
@@ -63,6 +64,10 @@ SIMPLE_JWT = {
 
 
 MIDDLEWARE = [
+    # Third party middleware Cross Origin Resource Sharing 
+    # allows in-browser requests to Django app from other origins 
+    'corsheaders.middleware.CorsMiddleware', 
+    # Django default
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -72,6 +77,10 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     # Other middleware
     'api.middleware.SessionTrackingMiddleware',
+]
+
+CORS_ALLOWED_ORIGINS = [
+    'http://localhost:3000/'
 ]
 
 ROOT_URLCONF = 'controller.urls'
