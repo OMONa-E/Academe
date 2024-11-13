@@ -34,8 +34,10 @@ function App() {
         <LogoutButton />
         <Routes>
           {/* Public Login Route */}
-          <Route path="/" element={<Navigate to="/login" />} />  {/* Default route redirect */}
-          <Route path="/login" element={<Login />} />
+          <Route
+            path="/login"
+            element={isAuthenticated() ? <Navigate to="/dashboard" /> : <Login />}
+          />
 
           {/* Private Route for each dashboard based on role */}
           <Route
@@ -64,6 +66,8 @@ function App() {
           />
           {/* TODO: other routes */}
 
+          {/* Redirect from default path to dashboard if authenticated, else login */}
+          <Route path="/" element={<Navigate to={isAuthenticated() ? "/dashboard" : "/login"} />} />
           {/* Catch-all route to redirect to login if no match is found */}
           <Route path="*" element={<Navigate to="/login" />} />
         </Routes>
