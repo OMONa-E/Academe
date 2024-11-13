@@ -5,53 +5,71 @@ const API_URL = 'http://localhost:8000/api';
 
 // Default headers for Auth
 const authHeaders = () => ({ 
-  headers: { Authorization: `Bearer ${getAccessToken()}`} 
+  headers: { Authorization: `Bearer ${getAccessToken()}` } 
 });
 
-// List - GET_all
+// List - GET all employers
 export const getEmployer = async () => {
-  const response = await axios.get(`${API_URL}/employers/`, authHeaders());
-  return response.data;
-};
-
-// Retrieve - GET_by_id
-export const getEmployerDetails = async (employerId) => {
-  const response = await axios.get(`${API_URL}/employers/${employerId}/`, authHeaders());
-  return  response.data;
-}
-
-// Update - PUT_by_id
-export const updateEmployer = async (employerId, employerData) => {
-  const response = await axios.put(`${API_URL}/employers/${employerId}/update/`, employerData, authHeaders());
-  return response.data;
-}
-
-// Delete - DELETE_by_id
-export const deleteEmployer = async (employerId) => {
-  const response = await axios.delete(`${API_URL}/employers/${employerId}/delete/`, authHeaders());
-  return response.status === 204;
-}
-
-export const getEmployees = async (employerId) => {
   try {
-    const response = await axios.get(`${API_URL}/employers/${employerId}/employees/`, {
-      headers: { Authorization: `Bearer ${getAccessToken()}` }
-    });
+    const response = await axios.get(`${API_URL}/employers/`, authHeaders());
     return response.data;
   } catch (error) {
-    console.error("Error fetching employees:", error);
+    console.error("Error fetching employers:", error);
     throw error;
   }
 };
 
-export const getFinancialData = async (employerId) => {
+// Retrieve - GET employer by ID
+export const getEmployerDetails = async (employerId) => {
   try {
-    const response = await axios.get(`${API_URL}/employers/${employerId}/financial-data/`, {
-      headers: { Authorization: `Bearer ${getAccessToken()}` }
-    });
+    const response = await axios.get(`${API_URL}/employers/${employerId}/`, authHeaders());
     return response.data;
   } catch (error) {
-    console.error("Error fetching financial data:", error);
+    console.error(`Error fetching employer details for ID ${employerId}:`, error);
+    throw error;
+  }
+};
+
+// Update - PUT employer by ID
+export const updateEmployer = async (employerId, employerData) => {
+  try {
+    const response = await axios.put(`${API_URL}/employers/${employerId}/update/`, employerData, authHeaders());
+    return response.data;
+  } catch (error) {
+    console.error(`Error updating employer with ID ${employerId}:`, error);
+    throw error;
+  }
+};
+
+// Delete - DELETE employer by ID
+export const deleteEmployer = async (employerId) => {
+  try {
+    const response = await axios.delete(`${API_URL}/employers/${employerId}/delete/`, authHeaders());
+    return response.status === 204;
+  } catch (error) {
+    console.error(`Error deleting employer with ID ${employerId}:`, error);
+    throw error;
+  }
+};
+
+// Get employees under a specific employer
+export const getEmployees = async (employerId) => {
+  try {
+    const response = await axios.get(`${API_URL}/employers/${employerId}/employees/`, authHeaders());
+    return response.data;
+  } catch (error) {
+    console.error(`Error fetching employees for employer ID ${employerId}:`, error);
+    throw error;
+  }
+};
+
+// Get financial data for a specific employer
+export const getFinancialData = async (employerId) => {
+  try {
+    const response = await axios.get(`${API_URL}/employers/${employerId}/financial-data/`, authHeaders());
+    return response.data;
+  } catch (error) {
+    console.error(`Error fetching financial data for employer ID ${employerId}:`, error);
     throw error;
   }
 };
