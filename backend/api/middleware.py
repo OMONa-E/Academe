@@ -1,8 +1,11 @@
 from typing import Any
 from django.utils import timezone
+from django.utils.deprecation import MiddlewareMixin
 from django.contrib.auth import get_user_model
+from django.conf import settings
 from .models import AuditLog
-import user_agents
+import user_agents, jwt
+from rest_framework_simplejwt.tokens import AccessToken
 
 # Initialize our User model
 # ---------------------------------------------------------
@@ -42,3 +45,29 @@ class SessionTrackingMiddleware:
                 log_entry.save()
         return response
         
+# Add Role To Token Middlware Class
+# ---------------------------------------------------------
+class AddRoleToTokenMiddleware(MiddlewareMixin):
+    def process_response(self, request, response):
+        # Check if the response contains an access token
+        if request.path == '/api/token/' and response.status_code == 200:
+            access_token = response.data.get("access")
+            
+            if access_token:
+                # Decode the token to get the existing payload
+                decoded_token = jwt.decode(access_token, settings.SECRET_KEY, algorithms=["HS256"])
+
+                # Get the user's role
+                user = User.objects.get(id=decoded_token["user_id"])
+                role = getattr(user, "role", None)
+
+                # Re-encode the token with the added role if it exists
+                if role:
+                    # Create a new token with additional claim
+                    new_token = AccessToken.for_user(user)
+                    new_token['role'] = role
+                    
+                    # Update the response with the modified token
+                    response.data["access"] = str(new_token)
+
+        return response
