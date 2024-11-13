@@ -29,3 +29,5 @@ function SessionList() {
         </div>
     );
 }
+
+export default SessionList;
