@@ -34,6 +34,6 @@ export const updateClient = async (clientId, clientData) => {
 
 // Delete - DELETE_by_id
 export const deleteClient = async (clientId) => {
-  const response = await axios.delete(`${API_URL}/clients/${clientId}`, authHeaders());
+  const response = await axios.delete(`${API_URL}/clients/${clientId}/`, authHeaders());
   return response.status === 204;
 }
