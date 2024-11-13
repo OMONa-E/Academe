@@ -1,5 +1,5 @@
 import React, { createContext, useState, useEffect } from 'react';
-import { getAccessToken, logout as logoutService } from '../services/authService';
+import { getAccessToken, login as loginService, logout as logoutService } from '../services/authService';
 import { jwtDecode } from "jwt-decode";
 
 export const AuthContext = createContext();
@@ -18,13 +18,19 @@ export const AuthProvider = ({ children }) => {
   const isAuthenticated = () => !!user;
   const getUserRole = () => user ? user.role : null;
 
-  const handleLogout = () => {
+  const handleLogin = async (username, password) => {
+    const data = await loginService(username, password);
+    const decodedToken = jwtDecode(data.access);
+    setUser({ ...decodedToken, token: data.access });
+  };
+
+  const handleLogout = async () => {
     logoutService();
     setUser(null);
   };
 
   return (
-    <AuthContext.Provider value={{ user, isAuthenticated, getUserRole, setUser, handleLogout }}>
+    <AuthContext.Provider value={{ user, isAuthenticated, getUserRole, setUser, handleLogout, handleLogin }}>
       {children}
     </AuthContext.Provider>
   );
