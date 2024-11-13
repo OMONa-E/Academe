@@ -2,6 +2,7 @@ import './App.css';
 import React, { useContext } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import Login from './components/auth/Login';
+import LogoutButton from './components/auth/LogoutButton'; 
 import CEODashboard from './components/dashboard/CEODashboard';
 import EmployerDashboard from './components/dashboard/EmployerDashboard';
 import EmployeeDashboard from './components/dashboard/EmployeeDashboard';
