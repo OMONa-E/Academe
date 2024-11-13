@@ -3,13 +3,18 @@ import axios from 'axios';
 const API_URL = 'http://localhost:8000/api';
 
 export const login = async (username, password) => {
-    const response = await axios.post(`${API_URL}/token/`, { username, password });
-    if (response.data.access) {
-        localStorage.setItem('access_token', response.data.access);
-        localStorage.setItem('refresh_token', response.data.refresh);
-        localStorage.setItem('role', response.data.role);
+    try {
+        const response = await axios.post(`${API_URL}/token/`, { username, password });
+        if (response.data.access) {
+            localStorage.setItem('access_token', response.data.access);
+            localStorage.setItem('refresh_token', response.data.refresh);
+            localStorage.setItem('role', response.data.role);
+        }
+        return response.data;
+    } catch (error) {
+        console.error("Login failed:", error);
+        throw error;
     }
-    return response.data;
 };
 
 export const logout = async () => {
@@ -22,11 +27,12 @@ export const logout = async () => {
             });
         } catch (error) {
             console.error('Logout failed:', error);
-            
+            throw error;
         }
     }
     localStorage.removeItem('access_token');
     localStorage.removeItem('refresh_token');
+    localStorage.removeItem('role');
 };
 
 export const getAccessToken = () => localStorage.getItem('access_token');
@@ -53,4 +59,4 @@ export const registerEmployer = async (employerData) => {
         console.error("Error during employer registration:", error);
         throw error;
     }
-}
+};

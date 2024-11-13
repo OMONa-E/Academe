@@ -1,31 +1,42 @@
 import React, { createContext, useState, useEffect } from 'react';
 import { getAccessToken, login as loginService, logout as logoutService } from '../services/authService';
-import jwtDecode from "jwt-decode";
+import { jwtDecode } from "jwt-decode";
 
 export const AuthContext = createContext();
+
+const isTokenExpired = (token) => {
+  const decodedToken = jwtDecode(token);
+  const currentTime = Date.now() / 1000;
+  return decodedToken.exp < currentTime;
+};
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
 
   useEffect(() => {
     const token = getAccessToken();
-    if (token) {
+    if (token && !isTokenExpired(token)) {
       const decodedToken = jwtDecode(token);
       setUser({ ...decodedToken, token });
+    } else {
+      handleLogout();
     }
   }, []);
 
-  const isAuthenticated = () => !!user;
-  const getUserRole = () => user ? user.role : null;
+  const isAuthenticated = () => !!getAccessToken();
+  const getUserRole = () => localStorage.getItem('role');
 
   const handleLogin = async (username, password) => {
     const data = await loginService(username, password);
-    const decodedToken = jwtDecode(data.access);
-    setUser({ ...decodedToken, token: data.access });
+    localStorage.setItem('access_token', data.access);
+    localStorage.setItem('role', data.role);
+    setUser({ token: data.access });
   };
 
   const handleLogout = async () => {
     await logoutService();
+    localStorage.removeItem('access_token');
+    localStorage.removeItem('role');
     setUser(null);
   };
 
@@ -44,7 +55,7 @@ export const AuthProvider = ({ children }) => {
   };
 
   return (
-    <AuthContext.Provider value={{ user, isAuthenticated, getUserRole, setUser, handleLogout, handleLogin, getDashboardPath }}>
+    <AuthContext.Provider value={{ user, isAuthenticated, getUserRole, handleLogout, handleLogin, getDashboardPath }}>
       {children}
     </AuthContext.Provider>
   );

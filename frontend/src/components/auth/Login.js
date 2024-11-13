@@ -13,13 +13,14 @@ function Login() {
         e.preventDefault();
         try {
             await handleLogin(username, password);
-            const role = getUserRole()
+            const role = getUserRole();
             const dashboardPath = getDashboardPath(role);
+            setError('');
             navigate(dashboardPath);
         } catch (err) {
-            setError('Invalid credientials. Please try again.');
+            setError('Login failed. Please check your credentials and try again.');
         }
-    };
+    };    
 
     return (
         <div>

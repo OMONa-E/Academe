@@ -2,7 +2,6 @@ import './App.css';
 import React, { useContext } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import Login from './components/auth/Login';
-import LogoutButton from './components/auth/LogoutButton'; 
 import CEODashboard from './components/dashboard/CEODashboard';
 import EmployerDashboard from './components/dashboard/EmployerDashboard';
 import EmployeeDashboard from './components/dashboard/EmployeeDashboard';
@@ -18,6 +17,11 @@ const PrivateRoute = ({ children, requiredRole }) => {
   }
 
   const userRole = getUserRole();
+  if (!userRole) {
+    // If the role is missing, redirect to login for re-authentication
+    return <Navigate to="/login" />
+  }
+
   if (requiredRole && userRole !== requiredRole) {
     // Redirect to an unauthorized page or dashboard if the role does not match
     return <Navigate to={getDashboardPath(userRole)} />;
@@ -47,7 +51,6 @@ function App() {
             path="/dashboard/ceo"
             element={
               <PrivateRoute requiredRole="CEO">
-                <LogoutButton />
                 <CEODashboard />
               </PrivateRoute>
             }
@@ -56,7 +59,6 @@ function App() {
             path="/dashboard/employer"
             element={
               <PrivateRoute requiredRole="Employer">
-                <LogoutButton />
                 <EmployerDashboard />
               </PrivateRoute>
             }
@@ -65,7 +67,6 @@ function App() {
             path="/dashboard/employee"
             element={
               <PrivateRoute requiredRole="Employee">
-                <LogoutButton />
                 <EmployeeDashboard />
               </PrivateRoute>
             }
