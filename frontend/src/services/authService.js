@@ -34,3 +34,23 @@ export const getAccessToken = () => localStorage.getItem('access_token');
 export const isAuthenticated = () => !!getAccessToken();
 
 export const getUserRole = () => localStorage.getItem('role');
+
+export const registerEmployee = async (employeeData) => {
+    try {
+        const response = await axios.post(`${API_URL}/register/employee/`, employeeData);
+        return response.data;
+    } catch (error) {
+        console.error("Error during employee registration:", error);
+        throw error;
+    }
+};
+
+export const registerEmployer = async (employerData) => {
+    try {
+        const response = await axios.post(`${API_URL}/register/employer/`, employerData);
+        return response.data;
+    } catch (error) {
+        console.error("Error during employer registration:", error);
+        throw error;
+    }
+}
