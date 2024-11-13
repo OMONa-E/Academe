@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { getAuditLogs } from '../../services/authService';
+import { getAudits } from '../../services/auditService'
 
 function CEODashboard() {
   const [auditLogs, setAuditLogs] = useState([]);
@@ -7,7 +7,7 @@ function CEODashboard() {
   useEffect(() => {
     const fetchAuditLogs = async () => {
       try {
-        const data = await getAuditLogs();
+        const data = await getAudits();
         setAuditLogs(data);
       } catch (error) {
         console.error("Error fetching audit logs:", error);
