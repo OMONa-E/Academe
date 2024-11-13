@@ -19,17 +19,23 @@ export const AuthProvider = ({ children }) => {
       const decodedToken = jwtDecode(token);
       setUser({ ...decodedToken, token });
     } else {
-      handleLogout();
+      setUser(null);
+      localStorage.removeItem('access_token');
+      localStorage.removeItem('role');
     }
   }, []);
 
-  const isAuthenticated = () => !!getAccessToken();
+  const isAuthenticated = () => !!localStorage.getItem('access_token');
   const getUserRole = () => localStorage.getItem('role');
+  console.log("isAuthenticated:", isAuthenticated());
+  console.log("getUserRole:", getUserRole());
+
 
   const handleLogin = async (username, password) => {
     const data = await loginService(username, password);
     localStorage.setItem('access_token', data.access);
     localStorage.setItem('role', data.role);
+    console.log("Access token and role set:", data.access, data.role); 
     setUser({ token: data.access });
   };
 
