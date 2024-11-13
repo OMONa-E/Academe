@@ -49,7 +49,7 @@ class SessionTrackingMiddleware:
 # ---------------------------------------------------------
 class AddRoleToTokenMiddleware(MiddlewareMixin):
     def process_response(self, request, response):
-        # Check if the response contains an access token
+        # Check if the request is to the token endpoint and response is successful
         if request.path == '/api/token/' and response.status_code == 200:
             access_token = response.data.get("access")
             
@@ -57,17 +57,22 @@ class AddRoleToTokenMiddleware(MiddlewareMixin):
                 # Decode the token to get the existing payload
                 decoded_token = jwt.decode(access_token, settings.SECRET_KEY, algorithms=["HS256"])
 
-                # Get the user's role
-                user = User.objects.get(id=decoded_token["user_id"])
-                role = getattr(user, "role", None)
+                # Get the user's role based on the user_id in the token payload
+                try:
+                    user = User.objects.get(id=decoded_token["user_id"])
+                    role = getattr(user, "role", None)
 
-                # Re-encode the token with the added role if it exists
-                if role:
-                    # Create a new token with additional claim
-                    new_token = AccessToken.for_user(user)
-                    new_token['role'] = role
-                    
-                    # Update the response with the modified token
-                    response.data["access"] = str(new_token)
+                    # If the user has a role, add it to the token payload
+                    if role:
+                        # Create a new token with additional claim
+                        new_token = AccessToken.for_user(user)
+                        new_token['role'] = role
+                        
+                        # Update the response with the modified token
+                        response.data["access"] = str(new_token)
+                except User.DoesNotExist:
+                    # Log an error or handle the case where the user is not found
+                    pass
 
         return response
+    
