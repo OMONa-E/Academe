@@ -16,7 +16,7 @@ export const AuthProvider = ({ children }) => {
   }, []);
 
   const isAuthenticated = () => !!user;
-  const getUserRole = () => user ? user.role : null
+  const getUserRole = () => user ? user.role : null;
 
   const handleLogout = () => {
     logoutService();
