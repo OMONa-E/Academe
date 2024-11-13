@@ -31,3 +31,27 @@ export const deleteEmployer = async (employerId) => {
   const response = await axios.delete(`${API_URL}/employers/${employerId}/delete/`, authHeaders());
   return response.status === 204;
 }
+
+export const getEmployees = async (employerId) => {
+  try {
+    const response = await axios.get(`${API_URL}/employers/${employerId}/employees/`, {
+      headers: { Authorization: `Bearer ${getAccessToken()}` }
+    });
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching employees:", error);
+    throw error;
+  }
+};
+
+export const getFinancialData = async (employerId) => {
+  try {
+    const response = await axios.get(`${API_URL}/employers/${employerId}/financial-data/`, {
+      headers: { Authorization: `Bearer ${getAccessToken()}` }
+    });
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching financial data:", error);
+    throw error;
+  }
+};

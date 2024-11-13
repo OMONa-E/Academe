@@ -31,3 +31,27 @@ export const deleteEmployee = async (employeeId) => {
   const response = await axios.delete(`${API_URL}/employees/${employeeId}/delete/`, authHeaders());
   return response.status === 204;
 }
+
+export const getAssignedClients = async (employeeId) => {
+  try {
+    const response = await axios.get(`${API_URL}/employees/${employeeId}/clients/`, {
+      headers: { Authorization: `Bearer ${getAccessToken()}` }
+    });
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching assigned clients:", error);
+    throw error;
+  }
+};
+
+export const getUpcomingSessions = async (employeeId) => {
+  try {
+    const response = await axios.get(`${API_URL}/employees/${employeeId}/sessions/`, {
+      headers: { Authorization: `Bearer ${getAccessToken()}` }
+    });
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching upcoming sessions:", error);
+    throw error;
+  }
+};
