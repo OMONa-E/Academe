@@ -34,6 +34,7 @@ function App() {
         <LogoutButton />
         <Routes>
           {/* Public Login Route */}
+          <Route path="/" element={<Navigate to="/login" />} />  {/* Default route redirect */}
           <Route path="/login" element={<Login />} />
 
           {/* Private Route for each dashboard based on role */}
