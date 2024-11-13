@@ -28,8 +28,10 @@ const PrivateRoute = ({ children, requiredRole }) => {
 
 function App() {
   return (
-    <div className="App">
-      <Router>
+    <Router>
+      <div className="App">
+        {/* Display the Logout button when a user is logged in */}
+        <LogoutButton />
         <Routes>
           {/* Public Login Route */}
           <Route path="/login" element={<Login />} />
@@ -64,8 +66,8 @@ function App() {
           {/* Catch-all route to redirect to login if no match is found */}
           <Route path="*" element={<Navigate to="/login" />} />
         </Routes>
-      </Router>
-    </div>
+      </div>
+    </Router>
   );
 }
 
