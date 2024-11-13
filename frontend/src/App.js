@@ -10,7 +10,7 @@ import { AuthContext } from './context/AuthContext';
 
 // PrivateRoute component to protect routes based on authentication and role
 const PrivateRoute = ({ children, requiredRole }) => {
-  const { isAuthenticated, getUserRole } = useContext(AuthContext);
+  const { isAuthenticated, getUserRole, getDashboardPath } = useContext(AuthContext);
 
   if (!isAuthenticated()) {
     // Redirect to login if the user is not authenticated
@@ -20,37 +20,21 @@ const PrivateRoute = ({ children, requiredRole }) => {
   const userRole = getUserRole();
   if (requiredRole && userRole !== requiredRole) {
     // Redirect to an unauthorized page or dashboard if the role does not match
-    return <Navigate to={`/${userRole === "CEO" ? "dashboard/ceo" : userRole === "Employer" ? "dashboard/employer" : userRole === "Employee" ? "dashboard/employee" : "/unauthorized"}`} />;
+    return <Navigate to={getDashboardPath(userRole)} />;
   }
 
   // Render the children if authenticated and role matches
   return children;
 };
 
-// Dynamic redirect function based on user role
-const getDashboardPath = (role) => {
-  switch (role) {
-    case 'CEO':
-      return '/dashboard/ceo';
-    case 'Employer':
-      return '/dashboard/employer';
-    case 'Employee':
-      return '/dashboard/employee';
-    default:
-      return '/login';  // Fallback to login if role is not recognized
-  }
-};
-
 function App() {
-  const { isAuthenticated, getUserRole } = useContext(AuthContext);
+  const { isAuthenticated, getUserRole, getDashboardPath } = useContext(AuthContext);
   const userRole = getUserRole();
   const dashboardPath = getDashboardPath(userRole);
 
   return (
     <Router>
       <div className="App">
-        {/* Display the Logout button when a user is logged in */}
-        <LogoutButton />
         <Routes>
           {/* Public Login Route */}
           <Route
@@ -63,6 +47,7 @@ function App() {
             path="/dashboard/ceo"
             element={
               <PrivateRoute requiredRole="CEO">
+                <LogoutButton />
                 <CEODashboard />
               </PrivateRoute>
             }
@@ -71,6 +56,7 @@ function App() {
             path="/dashboard/employer"
             element={
               <PrivateRoute requiredRole="Employer">
+                <LogoutButton />
                 <EmployerDashboard />
               </PrivateRoute>
             }
@@ -79,6 +65,7 @@ function App() {
             path="/dashboard/employee"
             element={
               <PrivateRoute requiredRole="Employee">
+                <LogoutButton />
                 <EmployeeDashboard />
               </PrivateRoute>
             }
