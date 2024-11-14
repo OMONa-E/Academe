@@ -77,7 +77,6 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     # Other middleware
     'api.middleware.SessionTrackingMiddleware',
-    'api.middleware.AddRoleToTokenMiddleware',
 ]
 
 CORS_ALLOWED_ORIGINS = [

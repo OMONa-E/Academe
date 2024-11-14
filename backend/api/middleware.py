@@ -1,11 +1,8 @@
 from typing import Any
 from django.utils import timezone
-from django.utils.deprecation import MiddlewareMixin
 from django.contrib.auth import get_user_model
-from django.conf import settings
 from .models import AuditLog
-import user_agents, jwt
-from rest_framework_simplejwt.tokens import AccessToken
+import user_agents
 
 # Initialize our User model
 # ---------------------------------------------------------
@@ -44,35 +41,3 @@ class SessionTrackingMiddleware:
                 log_entry.last_active = timezone.now() # Update the last active timestamp on every request
                 log_entry.save()
         return response
-        
-# Add Role To Token Middlware Class
-# ---------------------------------------------------------
-class AddRoleToTokenMiddleware(MiddlewareMixin):
-    def process_response(self, request, response):
-        # Check if the request is to the token endpoint and response is successful
-        if request.path == '/api/token/' and response.status_code == 200:
-            access_token = response.data.get("access")
-            
-            if access_token:
-                # Decode the token to get the existing payload
-                decoded_token = jwt.decode(access_token, settings.SECRET_KEY, algorithms=["HS256"])
-
-                # Get the user's role based on the user_id in the token payload
-                try:
-                    user = User.objects.get(id=decoded_token["user_id"])
-                    role = getattr(user, "role", None)
-
-                    # If the user has a role, add it to the token payload
-                    if role:
-                        # Create a new token with additional claim
-                        new_token = AccessToken.for_user(user)
-                        new_token['role'] = role
-                        
-                        # Update the response with the modified token
-                        response.data["access"] = str(new_token)
-                except User.DoesNotExist:
-                    # Log an error or handle the case where the user is not found
-                    pass
-
-        return response
-    
