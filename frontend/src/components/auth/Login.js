@@ -12,8 +12,8 @@ import {
 } from '@mui/material';
 import GoogleIcon from '@mui/icons-material/Google';
 import AppleIcon from '@mui/icons-material/Apple';
-import WindowsIcon from '@mui/icons-material/Windows';
-import { Slack, SSO } from './CustomIcons'; // Assume you have custom icons for Slack and SSO
+// import WindowsIcon from '@mui/icons-material/Windows';
+// import { Slack, SSO } from './CustomIcons'; // Assume you have custom icons for Slack and SSO
 
 function Login() {
   const [username, setUsername] = useState('');
@@ -95,9 +95,9 @@ function Login() {
         </Button>
 
         <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 1 }}>
-          <IconButton><WindowsIcon /></IconButton>
+          {/* <IconButton><WindowsIcon /></IconButton> */}
           <IconButton><AppleIcon /></IconButton>
-          <IconButton><Slack /></IconButton>
+          {/* <IconButton><Slack /></IconButton> */}
           <Button variant="outlined">SAML SSO</Button>
         </Box>
 
