@@ -42,10 +42,18 @@ function Login() {
         flexDirection: 'column',
         alignItems: 'center',
         mt: 8,
+        fontFamily: 'Karla, sans-serif',  // Default font for the component
       }}
     >
-      <Typography variant="h4" gutterBottom>
-        Log into your Account
+      <Typography
+        variant="h3"
+        gutterBottom
+        sx={{
+          fontFamily: '"Roboto Mono", monospace', // Override for Roboto Mono
+          fontWeight: 'bold',
+        }}
+      >
+        roadMasters
       </Typography>
 
       <Box component="form" onSubmit={handleLoginClick} sx={{ width: '100%', maxWidth: 400 }}>
@@ -56,6 +64,7 @@ function Login() {
           variant="outlined"
           value={username}
           onChange={(e) => setUsername(e.target.value)}
+          slotProps={{ sx: { fontFamily: 'Karla, sans-serif' } }}
         />
         <TextField
           fullWidth
@@ -65,10 +74,11 @@ function Login() {
           variant="outlined"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
+          slotProps={{ sx: { fontFamily: 'Karla, sans-serif' } }} // Karla for label
         />
-        {error && <Typography color="error">{error}</Typography>}
+        {error && <Typography color="error" sx={{ fontFamily: 'Karla, sans-serif' }}>{error}</Typography>}
 
-        <Link href="#" variant="body2" sx={{ display: 'block', mt: 1, mb: 2 }}>
+        <Link href="#" variant="body2" sx={{ display: 'block', mt: 1, mb: 2, fontFamily: 'Karla, sans-serif' }}>
           Forgot password?
         </Link>
 
@@ -77,7 +87,7 @@ function Login() {
           variant="contained"
           color="primary"
           fullWidth
-          sx={{ py: 1.5, mb: 2 }}
+          sx={{ py: 1.5, mb: 2, fontFamily: 'Karla, sans-serif' }}
         >
           Log in
         </Button>
@@ -89,7 +99,7 @@ function Login() {
           color="secondary"
           fullWidth
           startIcon={<GoogleIcon />}
-          sx={{ mb: 1 }}
+          sx={{ mb: 1, fontFamily: 'Karla, sans-serif' }}
         >
           Continue with Google
         </Button>
@@ -98,10 +108,10 @@ function Login() {
           {/* <IconButton><WindowsIcon /></IconButton> */}
           <IconButton><AppleIcon /></IconButton>
           {/* <IconButton><Slack /></IconButton> */}
-          <Button variant="outlined">SAML SSO</Button>
+          <Button variant="outlined" sx={{ fontFamily: 'Karla, sans-serif' }}>SAML SSO</Button>
         </Box>
 
-        <Typography variant="body2" sx={{ mt: 3 }}>
+        <Typography variant="body2" sx={{ mt: 3, fontFamily: 'Karla, sans-serif' }}>
           Don't have an account yet? <Link href="#">Sign up here →</Link>
         </Typography>
       </Box>
