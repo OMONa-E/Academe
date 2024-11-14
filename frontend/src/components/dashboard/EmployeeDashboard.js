@@ -1,41 +1,96 @@
-import React, { useEffect, useState } from 'react';
-import { getAssignedClients, getUpcomingSessions } from '../../services/employeeService';
+import React from 'react';
+import { Container, Grid, Paper, Typography, List, ListItem, ListItemText, Divider, Grid2 } from '@mui/material';
+import { styled } from '@mui/material/styles';
 
-function EmployeeDashboard() {
-  const [clients, setClients] = useState([]);
-  const [sessions, setSessions] = useState([]);
+// Styled components
+const Root = styled('div')(({ theme }) => ({
+  flexGrow: 1,
+  fontFamily: 'Karla, sans-serif',
+}));
 
-  useEffect(() => {
-    const fetchEmployeeData = async () => {
-      try {
-        const clientData = await getAssignedClients();
-        const sessionData = await getUpcomingSessions();
-        setClients(clientData);
-        setSessions(sessionData);
-      } catch (error) {
-        console.error("Error fetching employee data:", error);
-      }
-    };
-    fetchEmployeeData();
-  }, []);
+const Sidebar = styled(Grid)(({ theme }) => ({
+  height: '100vh',
+  backgroundColor: theme.palette.background.paper,
+  padding: theme.spacing(2),
+}));
 
+const Content = styled(Grid)(({ theme }) => ({
+  padding: theme.spacing(3),
+}));
+
+const StyledPaper = styled(Paper)(({ theme }) => ({
+  padding: theme.spacing(2),
+  textAlign: 'center',
+  color: theme.palette.text.secondary,
+}));
+
+const EmployeeDashboard = () => {
   return (
-    <div>
-      <h1>Employee Dashboard</h1>
-      <h3>Assigned Clients</h3>
-      <ul>
-        {clients.map((client) => (
-          <li key={client.id}>{client.first_name} {client.last_name}</li>
-        ))}
-      </ul>
-      <h3>Upcoming Sessions</h3>
-      <ul>
-        {sessions.map((session) => (
-          <li key={session.id}>{session.module.title} on {new Date(session.session_date).toLocaleDateString()}</li>
-        ))}
-      </ul>
-    </div>
+    <Container>
+      <Root>
+        <Grid2 container spacing={3}>
+          {/* Sidebar */}
+          <Sidebar item xs={2}>
+            <List component="nav">
+              <ListItem button>
+                <ListItemText primary="Dashboard" />
+              </ListItem>
+              <ListItem button>
+                <ListItemText primary="Client" />
+              </ListItem>
+              <ListItem button>
+                <ListItemText primary="Academy" />
+              </ListItem>
+              <ListItem button>
+                <ListItemText primary="Profile" />
+              </ListItem>
+              <ListItem button>
+                <ListItemText primary="Notifications" />
+              </ListItem>
+              <Divider />
+              <ListItem button>
+                <ListItemText primary="Sign Out" />
+              </ListItem>
+            </List>
+          </Sidebar>
+
+          {/* Main Content */}
+          <Content item xs={10}>
+            <Grid2 container spacing={3}>
+              <Grid2 item xs={3}>
+                <StyledPaper>
+                  <Typography variant="h6">Bookings</Typography>
+                  <Typography variant="h4">281</Typography>
+                  <Typography variant="body2">+55% than last week</Typography>
+                </StyledPaper>
+              </Grid2>
+              <Grid2 item xs={3}>
+                <StyledPaper>
+                  <Typography variant="h6">Today's Users</Typography>
+                  <Typography variant="h4">2,300</Typography>
+                  <Typography variant="body2">+3% than last month</Typography>
+                </StyledPaper>
+              </Grid2>
+              <Grid2 item xs={3}>
+                <StyledPaper>
+                  <Typography variant="h6">Revenue</Typography>
+                  <Typography variant="h4">34k</Typography>
+                  <Typography variant="body2">+1% than yesterday</Typography>
+                </StyledPaper>
+              </Grid2>
+              <Grid2 item xs={3}>
+                <StyledPaper>
+                  <Typography variant="h6">Followers</Typography>
+                  <Typography variant="h4">+91</Typography>
+                  <Typography variant="body2">Just updated</Typography>
+                </StyledPaper>
+              </Grid2>
+            </Grid2>
+          </Content>
+        </Grid2>
+      </Root>
+    </Container>
   );
-}
+};
 
 export default EmployeeDashboard;
