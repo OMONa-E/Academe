@@ -21,10 +21,25 @@ function CEODashboard() {
       <h1>CEO Dashboard</h1>
       <h3>Audit Logs</h3>
       <ul>
-        {auditLogs.map((log) => (
+      {auditLogs.map((log) => (
           <li key={log.id}>
-            {log.action_type} by {log.actor} on {new Date(log.timestamp).toLocaleString()} using
-            {log.device_info} located at {log.ip_address}, last active at {log.last_active}
+            <strong>Action:</strong> {log.action_type} by {log.actor?.username || "Unknown"}
+            <br />
+            <strong>Timestamp:</strong> {new Date(log.timestamp).toLocaleString()}
+            <br />
+            <strong>Device:</strong> {log.device_info || "N/A"}
+            <br />
+            <strong>IP Address:</strong> {log.ip_address || "N/A"}
+            <br />
+            <strong>Last Active:</strong> {log.last_active ? new Date(log.last_active).toLocaleString() : "N/A"}
+            <br />
+            <strong>Login Timestamp:</strong> {log.login_timestamp ? new Date(log.login_timestamp).toLocaleString() : "N/A"}
+            <br />
+            <strong>Changes:</strong> {log.changes && Object.keys(log.changes).length > 0 ? (
+              <pre>{JSON.stringify(log.changes, null, 2)}</pre>
+            ) : (
+              "No changes recorded"
+            )}
           </li>
         ))}
       </ul>

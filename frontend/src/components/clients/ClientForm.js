@@ -28,6 +28,7 @@ function ClientForm({ client, onSubmit }) {
         <form onSubmit={handleSubmit}>
             <input type="text" value={firstName} onChange={(e) => setFirstName(e.target.value)} placeholder="First Name" />
             <input type="text" value={lastName} onChange={(e) => setLastName(e.target.value)} placeholder="Last Name" />
+            <input type="text" value={status} onChange={(e) => setStatus(e.target.value)} placeholder="Payment Status" />
             <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="Email" />
             <input type="text" value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="Phone Number" />
             <input type="text" value={nin} onChange={(e) => setNIN(e.target.value)} placeholder="National Identification Number" />

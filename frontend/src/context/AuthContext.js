@@ -21,6 +21,7 @@ export const AuthProvider = ({ children }) => {
     } else {
       setUser(null);
       localStorage.removeItem('access_token');
+      localStorage.removeItem('refresh_token');
       localStorage.removeItem('role');
     }
   }, []);
