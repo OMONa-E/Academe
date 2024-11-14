@@ -48,6 +48,9 @@ const CEODashboard = () => {
                 <ListItemText primary="Academy" />
               </ListItem>
               <ListItem button>
+                <ListItemText primary="Finance" />
+              </ListItem>
+              <ListItem button>
                 <ListItemText primary="Profile" />
               </ListItem>
               <ListItem button>
