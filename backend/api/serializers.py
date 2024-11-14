@@ -1,7 +1,18 @@
+from typing import Dict
 from rest_framework import serializers
+from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from . import models
 
 
+class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
+    def validate(self, attrs: Dict[str, any]) -> Dict[str, str]:
+        data = super().validate(attrs)
+
+        user = self.user # get user instance
+        data['role'] = user.role if hasattr(user, 'role') else None # validate and add role to the token response data
+
+        return data
+    
 class CustomUserSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.CustomUser
