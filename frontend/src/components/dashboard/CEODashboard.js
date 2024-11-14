@@ -1,5 +1,5 @@
 import React from 'react';
-import { Container, Grid, Paper, Typography, List, ListItem, ListItemText, Divider, Grid2 } from '@mui/material';
+import { Container, Grid2, Paper, Typography, List, ListItem, ListItemText, Divider, Grid22 } from '@mui/material';
 import { styled } from '@mui/material/styles';
 
 // Styled components
@@ -8,13 +8,13 @@ const Root = styled('div')(({ theme }) => ({
   fontFamily: 'Karla, sans-serif',
 }));
 
-const Sidebar = styled(Grid)(({ theme }) => ({
+const Sidebar = styled(Grid2)(({ theme }) => ({
   height: '100vh',
   backgroundColor: theme.palette.background.paper,
   padding: theme.spacing(2),
 }));
 
-const Content = styled(Grid)(({ theme }) => ({
+const Content = styled(Grid2)(({ theme }) => ({
   padding: theme.spacing(3),
 }));
 
