@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { getEmployerDetails } from '../../services/employerService';
 
-function ClientDetails() {
+function EmployerDetails() {
     const { id } = useParams();
     const [employer, setEmployer] = useState(null);
 
@@ -32,4 +32,4 @@ function ClientDetails() {
     );
 }
 
-export default ClientDetails;
+export default EmployerDetails;
