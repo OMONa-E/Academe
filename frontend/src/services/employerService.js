@@ -9,7 +9,7 @@ const authHeaders = () => ({
 });
 
 // List - GET all employers
-export const getEmployer = async () => {
+export const getEmployers = async () => {
   try {
     const response = await axios.get(`${API_URL}/employers/`, authHeaders());
     return response.data;
