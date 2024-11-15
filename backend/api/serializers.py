@@ -31,6 +31,7 @@ class EmployeeProfileSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.EmployeeProfile
         fields = [ 'user', 'department', 'employer' ]
+        extra_kwargs = {'employer': {'read_only': True}}
 
 class ClientSerializer(serializers.ModelSerializer):
     assigned_employee = EmployeeProfileSerializer()
@@ -49,6 +50,7 @@ class ClientProgressSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.ClientProgress
         fields = [ 'id', 'client', 'module', 'completion_status', 'progress_notes', 'completion_date' ]
+        extra_kwargs = {'client': {'read_only': True}, 'module': {'read_only': True}}
 
 class TrainingSessionSerializer(serializers.ModelSerializer):
     client = ClientSerializer()
@@ -61,13 +63,15 @@ class PaymentSerializer(serializers.ModelSerializer):
    client = ClientSerializer()
    class Meta:
        model = models.Payment
-       fields = [ 'id', 'client', 'amount', 'payment_date', 'receipt_number' ] 
+       fields = [ 'id', 'client', 'amount', 'payment_date', 'receipt_number' ]
+       extra_kwargs = {'client': {'read_only': True}} 
 
 class NotificationSerializer(serializers.ModelSerializer):
     user = CustomUserSerializer()
     class Meta:
         model = models.Notification
         fields = [ 'id', 'user', 'message', 'created_at', 'is_read' ]
+        extra_kwargs = {'user': {'read_only': True}}
 
 class AuditLogSerilizer(serializers.ModelSerializer):
     actor = CustomUserSerializer()
