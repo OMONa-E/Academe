@@ -1,5 +1,5 @@
 import React from 'react';
-import { Container, Grid2, Paper, Typography, List, ListItem, ListItemText, Divider, Grid2 } from '@mui/material';
+import { Container, Grid2, Paper, Typography, List, ListItem, ListItemText, Divider} from '@mui/material';
 import { styled } from '@mui/material/styles';
 
 // Styled components

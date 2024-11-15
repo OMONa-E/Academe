@@ -1,12 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import {
     Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper,
-    Button, Dialog, DialogActions, DialogContent, DialogTitle, TextField,
+    Button, Dialog, DialogActions, DialogContent, DialogTitle, TextField, MenuItem
   } from '@mui/material';
-import { getEmployers, getEmployerDetails, updateEmployer, deleteEmployer } from '../../services/employerService';
+import { getEmployers, updateEmployer, deleteEmployer } from '../../services/employerService';
 import { registerEmployer } from '../../services/authService';
-
-import React from 'react'
 
 const EmployerComponent = () => {
     const [employers, setEmployers] = useState([]);
@@ -148,10 +146,10 @@ const EmployerComponent = () => {
                         <TextField label="Last Name" fullWidth value={lastName} onChange={(e) => setLastName(e.target.value)} />
                         <TextField label="NIN" fullWidth value={nin} onChange={(e) => setNIN(e.target.value)} />
                         <TextField label="Date of Birth" type="date" fullWidth value={dateOfBirth} onChange={(e) => setDateOfBirth(e.target.value)} />
-                        <TextField label="Department" select fullWidth slotProps={{ native: true }} value={department} onChange={(e) => setDepartment(e.target.value)} >
-                            <option value="training">Training</option>
-                            <option value="finance">Finance</option>
-                            <option value="farewell">Farewell</option>
+                        <TextField label="Department" select fullWidth native value={department} onChange={(e) => setDepartment(e.target.value)} >
+                            <MenuItem value="training">Training</MenuItem>
+                            <MenuItem value="finance">Finance</MenuItem>
+                            <MenuItem value="farewell">Farewell</MenuItem>
                         </TextField>
                         <DialogActions>
                             <Button onClick={handleCloseForm} color="primary">Cancel</Button>
