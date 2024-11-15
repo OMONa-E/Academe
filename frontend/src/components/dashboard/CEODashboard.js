@@ -1,6 +1,8 @@
-import React from 'react';
-import { Container, Grid2, Paper, Typography, List, ListItem, ListItemText, Divider, Grid22 } from '@mui/material';
+import React, { useState } from 'react';
+import { Container, Grid2, Paper, Typography, List, ListItem, ListItemText, Divider } from '@mui/material';
 import { styled } from '@mui/material/styles';
+import EmployerComponent from '../employer/EmployerComponent';
+import LogoutButton from '../auth/LogoutButton';
 
 // Styled components
 const Root = styled('div')(({ theme }) => ({
@@ -25,46 +27,35 @@ const StyledPaper = styled(Paper)(({ theme }) => ({
 }));
 
 const CEODashboard = () => {
-  return (
-    <Container>
-      <Root>
-        <Grid2 container spacing={3}>
-          {/* Sidebar */}
-          <Sidebar item xs={2}>
-            <List component="nav">
-              <ListItem button>
-                <ListItemText primary="Dashboard" />
-              </ListItem>
-              <ListItem button>
-                <ListItemText primary="Employer" />
-              </ListItem>
-              <ListItem button>
-                <ListItemText primary="Employee" />
-              </ListItem>
-              <ListItem button>
-                <ListItemText primary="Client" />
-              </ListItem>
-              <ListItem button>
-                <ListItemText primary="Academy" />
-              </ListItem>
-              <ListItem button>
-                <ListItemText primary="Finance" />
-              </ListItem>
-              <ListItem button>
-                <ListItemText primary="Profile" />
-              </ListItem>
-              <ListItem button>
-                <ListItemText primary="Notifications" />
-              </ListItem>
-              <Divider />
-              <ListItem button>
-                <ListItemText primary="Sign Out" />
-              </ListItem>
-            </List>
-          </Sidebar>
+  const [selectedSection, setSelectedSection] = useState('Dashboard');
+  const handleSidebarClick = (section) => setSelectedSection(section); // handler for sidebar item click
 
-          {/* Main Content */}
-          <Content item xs={10}>
+  const renderContent = () => { // render content based on selected section
+    switch (selectedSection) {
+      case 'Employer':
+        return <EmployerComponent />;
+      case 'Employee':
+        // return <EmployeeComponent />;
+        break;
+        case 'Client':
+          // return <ClientComponent />;
+          break;
+        case 'Academy':
+          // return <AcademyComponent />;
+          break;
+        case 'Finance':
+          // return <FinanceComponent />;
+          break;
+        case 'Profile':
+          // return <ProfileComponent />;
+          break;
+        case 'Notification':
+          // return <NotificationComponent />;
+          break;
+        case 'Sign Out':
+            return <LogoutButton />;
+        default:
+          return (
             <Grid2 container spacing={3}>
               <Grid2 item xs={3}>
                 <StyledPaper>
@@ -95,6 +86,31 @@ const CEODashboard = () => {
                 </StyledPaper>
               </Grid2>
             </Grid2>
+          );
+    }
+  };
+  return (
+    <Container>
+      <Root>
+        <Grid2 container spacing={3}>
+          {/* Sidebar */}
+          <Sidebar item xs={2}>
+            <List component="nav">
+              {['Dashboard', 'Employer', 'Employee', 'Client', 'Academy', 'Finance', 'Profile', 'Notification'].map((section) => (
+                <ListItem button key={section} onClick={() => handleSidebarClick(section)}>
+                  <ListItemText primary={section} />
+                </ListItem>
+              ))}              
+              <Divider />
+              <ListItem button onClick={() => handleSidebarClick('Sign Out')}>
+                <ListItemText primary="Sign out" />
+              </ListItem>
+            </List>
+          </Sidebar>
+
+          {/* Main Content */}
+          <Content item xs={10}>
+            {renderContent()}
           </Content>
         </Grid2>
       </Root>
