@@ -17,6 +17,7 @@ class CustomUserSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.CustomUser
         fields = [ 'id', 'username', 'email', 'first_name', 'last_name', 'role', 'date_of_birth', 'nin' ]
+        extra_kwargs = {'password': {'write_only': True}}
 
 class EmployerProfileSerializer(serializers.ModelSerializer):
     user = CustomUserSerializer()
