@@ -1,23 +1,38 @@
-from typing import Dict
 from rest_framework import serializers
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
+from rest_framework_simplejwt.tokens import Token
+from django.contrib.auth.password_validation import validate_password
 from . import models
 
 
 class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
-    def validate(self, attrs: Dict[str, any]) -> Dict[str, str]:
-        data = super().validate(attrs)
+    @classmethod
+    def get_token(cls, user) -> Token:
+        token = super().get_token(user)
 
-        user = self.user # get user instance
-        data['role'] = user.role if hasattr(user, 'role') else None # validate and add role to the token response data
+        token['username'] = user.username
+        token['role'] = user.role
+        token['email'] = user.email
 
-        return data
+        return token
     
 class CustomUserSerializer(serializers.ModelSerializer):
+    password = serializers.CharField(write_only=True, required=True, validators=[validate_password])
+    password2 = serializers.CharField(write_only=True, required=True)
+
     class Meta:
         model = models.CustomUser
-        fields = [ 'id', 'username', 'email', 'first_name', 'last_name', 'role', 'date_of_birth', 'nin' ]
-        extra_kwargs = {'password': {'write_only': True}}
+        fields = [ 'id', 'username', 'password', 'password2', 'email', 'first_name', 'last_name', 'role', 'date_of_birth', 'nin' ] 
+    
+    def validate(self, attrs): # validates password and password2 equality
+        if attrs.get('password') != attrs.get('password2'):
+            raise serializers.ValidationError({'password': 'Passwords do not match.'})
+        return attrs
+    
+    def create(self, validated_data): # remove password2 since it's not part of the model; create the user and hash the password
+        validated_data.pop('password2')
+        user = models.CustomUser.objects.create_user(**validated_data)
+        return user
 
 class EmployerProfileSerializer(serializers.ModelSerializer):
     user = CustomUserSerializer()
