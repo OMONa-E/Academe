@@ -40,7 +40,7 @@ class EmployerProfile(models.Model):
 class EmployeeProfile(models.Model):
     user = models.OneToOneField(CustomUser, on_delete=models.CASCADE, limit_choices_to={'role': 'Emplopyee'})
     department = models.CharField(max_length=100, null=True, blank=True)
-    employer = models.ForeignKey(EmployerProfile, on_delete=models.SET_NULL, null=True, blank=True)
+    employer = models.ForeignKey(EmployerProfile, on_delete=models.SET_NULL, null=True, blank=True, related_name='employees')
 
     def __str__(self) -> str:
         return f"Employee Profile for {self.user.username}"
@@ -55,9 +55,10 @@ class Client(models.Model):
     first_name = models.CharField(max_length=100)
     last_name = models.CharField(max_length=100)
     email = models.EmailField(unique=True)
+    nin = models.CharField(max_length=100, unique=True)
     phone_number = models.CharField(max_length=15)
     status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='partial')
-    assigned_employee = models.ForeignKey(EmployeeProfile, on_delete=models.SET_NULL, null=True)
+    assigned_employee = models.ForeignKey(EmployeeProfile, on_delete=models.SET_NULL, null=True, related_name='clients')
     registration_date = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
     payment_status = models.BooleanField(default=False)
@@ -73,8 +74,8 @@ class TrainingModule(models.Model):
 # Client Progress Tracking Model
 # ------------------------------------------------------------
 class ClientProgress(models.Model):
-    client = models.ForeignKey(Client, on_delete=models.CASCADE)
-    module = models.ForeignKey(TrainingModule, on_delete=models.CASCADE)
+    client = models.ForeignKey(Client, on_delete=models.CASCADE, related_name='client_progress')
+    module = models.ForeignKey(TrainingModule, on_delete=models.CASCADE, related_name='client_progress')
     completion_status = models.BooleanField(default=False)
     progress_notes = models.TextField(blank=True, null=True)
     completion_date = models.DateTimeField(null=True, blank=True)
@@ -82,9 +83,9 @@ class ClientProgress(models.Model):
 # Training Session Management Model
 # ------------------------------------------------------------
 class TrainingSession(models.Model):
-    client = models.ForeignKey(Client, on_delete=models.CASCADE)
-    trainer = models.ForeignKey(EmployeeProfile, on_delete=models.SET_NULL, null=True)
-    module = models.ForeignKey(TrainingModule, on_delete=models.SET_NULL, null=True)
+    client = models.ForeignKey(Client, on_delete=models.CASCADE, related_name='training_sessions')
+    trainer = models.ForeignKey(EmployeeProfile, on_delete=models.SET_NULL, null=True, related_name='training_sessions')
+    module = models.ForeignKey(TrainingModule, on_delete=models.SET_NULL, null=True, related_name='training_sessions')
     session_date = models.DateTimeField()
     status = models.CharField(max_length=20, default='scheduled')
     notes = models.TextField(blank=True, null=True)
@@ -98,7 +99,7 @@ class Payment(models.Model):
         ('VisaCard', 'Visa Card'),
         ('Bank', 'Bank Counter')
     ]
-    client = models.ForeignKey(Client, on_delete=models.CASCADE)
+    client = models.ForeignKey(Client, on_delete=models.CASCADE, related_name='payments')
     amount = models.DecimalField(max_digits=10, decimal_places=2)
     payment_date = models.DateTimeField(default=timezone.now)
     receipt_number = models.CharField(max_length=100, unique=True)
@@ -107,7 +108,7 @@ class Payment(models.Model):
 # Notification For System Users Model
 # ------------------------------------------------------------
 class Notification(models.Model):
-    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
+    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='notifications')
     message = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
     is_read = models.BooleanField(default=False)
@@ -118,12 +119,19 @@ class AuditLog(models.Model):
     action_type = models.CharField(max_length=100)
     timestamp = models.DateTimeField(auto_now_add=True)
     actor = models.ForeignKey(CustomUser, on_delete=models.SET_NULL, null=True)
-    target_model = models.CharField(max_length=100)
-    target_object_id = models.PositiveIntegerField()
-    changes = models.JSONField()
+    target_model = models.CharField(max_length=100, blank=True, null=True)
+    target_object_id = models.PositiveIntegerField(blank=True, null=True)
+    changes = models.JSONField(default=dict)
+    # Session-specific fields
+    device_info = models.CharField(max_length=200, blank=True, null=True)
+    ip_address = models.GenericIPAddressField(blank=True, null=True)
+    login_timestamp = models.DateTimeField(null=True, blank=True)
+    last_active = models.DateTimeField(null=True, blank=True)
 
+    def __str__(self) -> str:
+        return f'{self.action_type} by {self.actor} on  {self.timestamp}'
 
-
+# ------------------------------------------------------------
 # Signals To Auto-Generate User Profile and Audit Logs
 # ------------------------------------------------------------
 from django.db.models.signals import post_save
