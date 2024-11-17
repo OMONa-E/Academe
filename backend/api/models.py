@@ -152,11 +152,33 @@ def create_role_based_profile(sender, instance, created, **kwargs):
 @receiver(post_save, sender=Payment)
 def create_audit_log(sender, instance, created, **kwargs):
     action = 'create' if created else 'update'
-    changes = {field.name: getattr(instance, field.name) for field in instance._meta.fields}
+
+    # Get changes only for updates
+    changes = {}
+    if not created:
+        old_instance = sender.objects.get(pk=instance.pk)
+        for field in instance._meta.fields:
+            field_name = field.name
+            old_value = getattr(old_instance, field_name)
+            new_value = getattr(instance, field_name)
+            if old_value != new_value:
+                changes[field_name] = {'old': old_value, 'new': new_value}
+
+    # Determine actor
+    actor = (
+        instance.user
+        if hasattr(instance, 'user') and instance.user
+        else instance.assigned_employee.user
+        if hasattr(instance, 'assigned_employee') and instance.assigned_employee
+        else None
+    )
+
+    # Create the audit log
     AuditLog.objects.create(
         action_type=action,
-        actor=instance.assigned_employee.user if hasattr(instance, 'assigned_employee') else None,  
+        actor=actor,  # Pass the `CustomUser` instance
         target_model=sender.__name__,
         target_object_id=instance.id,
         changes=changes,
+        timestamp=timezone.now,
     )
