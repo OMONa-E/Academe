@@ -49,32 +49,39 @@ class EmployeeProfileSerializer(serializers.ModelSerializer):
         extra_kwargs = {'employer': {'read_only': True}}
 
 class ClientSerializer(serializers.ModelSerializer):
-    assigned_employee = EmployeeProfileSerializer(
-        querset=models.EmployeeProfile.objects.all(), slug_field='user__username',
-        required=False, allow_null=True
+    assigned_employee = serializers.SlugRelatedField(
+        queryset=models.EmployeeProfile.objects.all(),
+        slug_field='user__username',
+        required=False,
+        allow_null=True
     )
+
     class Meta:
         model = models.Client
-        fields = [ 'id', 'first_name', 'last_name', 'email', 'nin', 'phone_number', 'status', 'assigned_employee', 'payment_status' ]
+        fields = [
+            'id', 'first_name', 'last_name', 'email', 'nin', 'phone_number',
+            'status', 'assigned_employee', 'payment_status'
+        ]
 
-    def create(self, validated_data):
+    def validate(self, attrs):
+        """
+        Validate and handle default assignment of `assigned_employee` if not provided.
+        """
         request = self.context.get('request')
-
-        # If no `assigned_employee` is provided
-        if not validated_data.get('assigned_employee'):
+        if not attrs.get('assigned_employee'):
             if request and hasattr(request.user, 'employeeprofile'):
-                # If the creator is an employee, assign them by default
-                validated_data['assigned_employee'] = request.user.employeeprofile
+                # Default to the current user’s employee profile if the user is an employee
+                attrs['assigned_employee'] = request.user.employeeprofile
             else:
-                # If the creator is a CEO or Employer, handle gracefully
-                default_employee = models.EmployeeProfile.objects.first()  # Example fallback to the first available
+                # Default to the first available employee profile
+                default_employee = models.EmployeeProfile.objects.first()
                 if default_employee:
-                    validated_data['assigned_employee'] = default_employee
+                    attrs['assigned_employee'] = default_employee
                 else:
                     raise serializers.ValidationError({
-                    'assigned_employee': 'No assigned employee provided, and no default available.'
+                        'assigned_employee': 'No assigned employee provided, and no default available.'
                     })
-        return super().create(validated_data)
+        return attrs
 
 class TrainingModuleSerializer(serializers.ModelSerializer):
     class Meta:
