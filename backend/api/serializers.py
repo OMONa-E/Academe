@@ -49,7 +49,7 @@ class EmployeeProfileSerializer(serializers.ModelSerializer):
         extra_kwargs = {'employer': {'read_only': True}}
 
 class ClientSerializer(serializers.ModelSerializer):
-    assigned_employee = EmployeeProfileSerializer()
+    assigned_employee = EmployeeProfileSerializer(required=False, allow_null=True)
     class Meta:
         model = models.Client
         fields = [ 'id', 'first_name', 'last_name', 'email', 'nin', 'phone_number', 'status', 'assigned_employee', 'payment_status' ]
