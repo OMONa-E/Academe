@@ -49,10 +49,32 @@ class EmployeeProfileSerializer(serializers.ModelSerializer):
         extra_kwargs = {'employer': {'read_only': True}}
 
 class ClientSerializer(serializers.ModelSerializer):
-    assigned_employee = EmployeeProfileSerializer(required=False, allow_null=True)
+    assigned_employee = EmployeeProfileSerializer(
+        querset=models.EmployeeProfile.objects.all(), slug_field='user__username',
+        required=False, allow_null=True
+    )
     class Meta:
         model = models.Client
         fields = [ 'id', 'first_name', 'last_name', 'email', 'nin', 'phone_number', 'status', 'assigned_employee', 'payment_status' ]
+
+    def create(self, validated_data):
+        request = self.context.get('request')
+
+        # If no `assigned_employee` is provided
+        if not validated_data.get('assigned_employee'):
+            if request and hasattr(request.user, 'employeeprofile'):
+                # If the creator is an employee, assign them by default
+                validated_data['assigned_employee'] = request.user.employeeprofile
+            else:
+                # If the creator is a CEO or Employer, handle gracefully
+                default_employee = models.EmployeeProfile.objects.first()  # Example fallback to the first available
+                if default_employee:
+                    validated_data['assigned_employee'] = default_employee
+                else:
+                    raise serializers.ValidationError({
+                    'assigned_employee': 'No assigned employee provided, and no default available.'
+                    })
+        return super().create(validated_data)
 
 class TrainingModuleSerializer(serializers.ModelSerializer):
     class Meta:
