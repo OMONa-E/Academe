@@ -65,10 +65,12 @@ REST_FRAMEWORK = {
 }
 
 SPECTACULAR_SETTINGS = {
-    'TITLE': 'Driving Training Management System API',
+    'TITLE': 'Road Masters Management System API',
     'DESCRIPTION': 'API documentation for managing users, clients, sessions, and audit logs in a driving training system.',
-    'VERSION': '1.0.0',
-    'SERVE_INCLUDE_SCHEMA': False,
+    'VERSION': 'v1.0',
+    'SERVE_INCLUDE_SCHEMA': True,
+    'SCHEMA_PATH_PREFIX': '/api/',  # Only include endpoints under /api
+    'SERVE_AUTHENTICATION': ['rest_framework.authentication.SessionAuthentication'],
 }
 
 SIMPLE_JWT = {
