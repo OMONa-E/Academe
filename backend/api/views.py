@@ -1,3 +1,4 @@
+from django.shortcuts import render
 from rest_framework import viewsets, generics, permissions, filters, status
 from rest_framework.decorators import action
 from rest_framework.response import Response
@@ -10,6 +11,11 @@ from .models import *
 from .serializers import *
 from .permissions import *
 
+
+# Default View
+# ------------------------------------------------------------
+def welcome_view(request):
+    return render(request, 'welcome.html')
 
 # Custom TokenObtainPair API View
 # ------------------------------------------------------------
