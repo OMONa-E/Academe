@@ -21,3 +21,4 @@ tzdata==2024.2
 ua-parser==0.18.0
 uritemplate==4.1.1
 user-agents==2.2.0
+whitenoise==6.8.2
