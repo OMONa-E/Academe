@@ -2,6 +2,7 @@ from rest_framework import serializers
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from rest_framework_simplejwt.tokens import Token
 from django.contrib.auth.password_validation import validate_password
+from drf_spectacular.utils import extend_schema_field
 from . import models
 
 
@@ -9,13 +10,16 @@ class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
     @classmethod
     def get_token(cls, user) -> Token:
         token = super().get_token(user)
-
         token['username'] = user.username
         token['role'] = user.role
         token['email'] = user.email
-
+        
+        print(f'Token generated for user: {user.username}')
         return token
-    
+
+class LogoutRequestSerializer(serializers.Serializer):
+    refresh = serializers.CharField()
+
 class CustomUserSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True, required=True, validators=[validate_password])
     password2 = serializers.CharField(write_only=True, required=True)
@@ -35,26 +39,29 @@ class CustomUserSerializer(serializers.ModelSerializer):
         return user
 
 class EmployerProfileSerializer(serializers.ModelSerializer):
-    user = CustomUserSerializer()
+    username = serializers.CharField(source='user.username', read_only=True)
+    email = serializers.EmailField(source='user.email', read_only=True)
+    first_name = serializers.CharField(source='user.first_name', read_only=True)
+    last_name = serializers.CharField(source='user.last_name', read_only=True)
+    role = serializers.CharField(source='user.role', read_only=True)
     class Meta:
         model = models.EmployerProfile
-        fields = [ 'user', 'department' ]
+        fields = [ 'username', 'email', 'first_name', 'last_name', 'role', 'department', ]
 
 class EmployeeProfileSerializer(serializers.ModelSerializer):
-    user = CustomUserSerializer()
-    employer = EmployerProfileSerializer()
+    username = serializers.CharField(source='user.username', read_only=True)
+    email = serializers.EmailField(source='user.email', read_only=True)
+    first_name = serializers.CharField(source='user.first_name', read_only=True)
+    last_name = serializers.CharField(source='user.last_name', read_only=True)
+    role = serializers.CharField(source='user.role', read_only=True) 
+
+    employer = EmployerProfileSerializer(read_only=True)
     class Meta:
         model = models.EmployeeProfile
-        fields = [ 'user', 'department', 'employer' ]
-        extra_kwargs = {'employer': {'read_only': True}}
+        fields = [ 'username', 'email', 'first_name', 'last_name', 'role', 'department', 'employer', ]
 
 class ClientSerializer(serializers.ModelSerializer):
-    assigned_employee = serializers.SlugRelatedField(
-        queryset=models.EmployeeProfile.objects.all(),
-        slug_field='user__username',
-        required=False,
-        allow_null=True
-    )
+    assigned_employee = serializers.SerializerMethodField()
 
     class Meta:
         model = models.Client
@@ -62,6 +69,15 @@ class ClientSerializer(serializers.ModelSerializer):
             'id', 'first_name', 'last_name', 'email', 'nin', 'phone_number',
             'status', 'assigned_employee', 'payment_status'
         ]
+
+    @extend_schema_field(serializers.CharField(allow_null=True))
+    def get_assigned_employee(self, obj) -> str:
+        """
+        Resolve the assigned employee's username.
+        """
+        if obj.assigned_employee and obj.assigned_employee.user:
+            return obj.assigned_employee.user.username
+        return None
 
     def validate(self, attrs):
         """
@@ -118,7 +134,13 @@ class NotificationSerializer(serializers.ModelSerializer):
         extra_kwargs = {'user': {'read_only': True}}
 
 class AuditLogSerilizer(serializers.ModelSerializer):
-    actor = CustomUserSerializer()
+    actor = serializers.SerializerMethodField()
     class Meta:
         model = models.AuditLog
         fields = [ 'id', 'action_type', 'timestamp', 'actor', 'target_model', 'target_object_id', 'changes' ]
+
+    @extend_schema_field(CustomUserSerializer)
+    def get_actor(self, obj):
+        if obj.actor:
+            return CustomUserSerializer(obj.actor).data
+        return None
